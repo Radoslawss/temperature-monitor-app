@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        setTimeout(function(){
+            window.location.reload(1);
+        }, 60000);
+    </script>
+</head>
+<body>
+    <div class="container">
+    <h1>Temperature Dashboard</h1>
+        <div class="temperature-container">
+            <p>Indoor:</p>
+            <p class="temperature-value">{{ indoor_temp }}°C</p>
+        </div>
+        <div class="temperature-container">
+            <p>Outdoor:</p>
+            <p class="temperature-value">{{ outdoor_temp }}°C</p>
+        </div>
+    </div>
+    
+</body>
+</html>
