@@ -70,6 +70,24 @@ def get_latest_temperatures():
         return round(indoor_temperature, 1), round(outdoor_temperature, 1)
     else:
         return None, None
+    
+@app.route('/history')
+def history():
+    db_path = get_database_path('data/temperature_data.db')
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    c.execute('''
+        SELECT date, time, indoor_temperature, outdoor_temperature
+        FROM measurements
+        ORDER BY id DESC
+        LIMIT 20
+    ''')
+    measurements = c.fetchall()
+
+    conn.close()
+
+    return render_template('history.html', measurements=measurements)
 
 @app.route('/')
 def index():
