@@ -1,12 +1,21 @@
 from flask import Flask, render_template, request, jsonify
-import csv
-import pandas as pd
 import sqlite3
+import os
+import sys
 
 app = Flask(__name__)
 
+def get_database_path(db_file: str) -> str:
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    return os.path.join(base_path, db_file)
+
 def create_database():
-    conn = sqlite3.connect('data/temperature_data.db')
+    db_path = get_database_path('data/temperature_data.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''
     CREATE TABLE IF NOT EXISTS measurements (
@@ -15,7 +24,7 @@ def create_database():
         time TEXT,
         indoor_temperature REAL,
         outdoor_temperature REAL
-    )   
+    )
     ''')
     conn.commit()
     conn.close()
@@ -29,7 +38,8 @@ def receive_json():
     }
 
     # Save data to db
-    conn = sqlite3.connect('data/temperature_data.db')
+    db_path = get_database_path('data/temperature_data.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''
         INSERT INTO measurements (date, time, indoor_temperature, outdoor_temperature)
@@ -41,7 +51,8 @@ def receive_json():
     return jsonify(response), 200
 
 def get_latest_temperatures():
-    conn = sqlite3.connect('data/temperature_data.db')
+    db_path = get_database_path('data/temperature_data.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
     c.execute('''
